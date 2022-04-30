@@ -47,12 +47,35 @@ const userController = {
     res.redirect('/signin')
   },
   getUser: (req, res, next) => {
-    return User.findByPk(req.params.id, {
-      include: [{ model: Comment, include: Restaurant }]
+    const user = req.user
+    const userParamsId = Number(req.params.id)
+    return User.findByPk(userParamsId, {
+      include: [
+        { model: Comment, include: Restaurant },
+        { model: Restaurant, as: 'FavoritedRestaurants' },
+        { model: User, as: 'Followers' },
+        { model: User, as: 'Followings' }
+      ]
     })
-      .then(user => {
-        if (!user) throw new Error("User didn't exist!")
-        return res.render('users/profile', { user: user.toJSON() })
+      .then(checkedUser => {
+        if (!checkedUser) throw new Error("User didn't exist!")
+        checkedUser = checkedUser.toJSON()
+        checkedUser.owner = Number(user.id) === userParamsId || false
+        checkedUser.isFollowed = req.user.Followings.some(
+          f => f.id === checkedUser.id
+        )
+        checkedUser.commentedRestaurants = checkedUser.Comments.reduce(
+          (accumulator, comment) => {
+            if (!accumulator.some(r => r.id === comment.restaurantId)) {
+              accumulator.push(comment.Restaurant)
+            }
+            return accumulator
+          }, [])
+
+        res.render('users/profile', {
+          user,
+          checkedUser
+        })
       })
       .catch(err => next(err))
   },
@@ -72,12 +95,15 @@ const userController = {
       .catch(err => next(err))
   },
   putUser: (req, res, next) => {
+    const userId = Number(req.user.id)
+    const userParamsId = Number(req.params.id)
     const { file } = req
     const { name } = req.body
     if (!name) throw new Error('Username is required!')
 
-    if (Number(req.params.id) !== Number(req.user.id)) {
-      res.redirect(`/users/${req.params.id}`)
+    if (userParamsId !== userId) {
+      req.flash('error_messages', '您沒有修改其他使用者頁面的權限！')
+      res.redirect(`/users/${userId}`)
     }
 
     return Promise.all([User.findByPk(req.params.id), imgurFileHandler(file)])
@@ -90,7 +116,7 @@ const userController = {
       })
       .then(user => {
         req.flash('success_messages', '使用者資料編輯成功')
-        res.redirect(`/users/${req.params.id}`)
+        res.redirect(`/users/${userParamsId}`)
       })
       .catch(err => next(err))
   },
@@ -171,6 +197,7 @@ const userController = {
       .catch(err => next(err))
   },
   getTopUsers: (req, res, next) => {
+    const userId = Number(req.user.id)
     return User.findAll({
       include: [{ model: User, as: 'Followers' }]
     })
@@ -179,7 +206,8 @@ const userController = {
           .map(user => ({
             ...user.toJSON(),
             followerCount: user.Followers.length,
-            isFollowed: req.user.Followings.some(f => f.id === user.id)
+            isFollowed: req.user.Followings.some(f => f.id === user.id),
+            owner: Number(user.id) !== userId
           }))
           .sort((a, b) => b.followerCount - a.followerCount)
         res.render('top-users', { users: result })
