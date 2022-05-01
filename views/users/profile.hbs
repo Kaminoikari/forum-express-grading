@@ -47,7 +47,7 @@
         {{#each checkedUser.Followings}}
           <a href="/users/{{this.id}}" class="text-decoration-none">
             {{#if this.image}}
-              <img src="{{this.image}}" width="60" height="60" class="avatar"
+              <img src="{{this.image}}" width="60" height="60" class="center-block img-responsive m-1"
                 style="transition: opacity 0.5s; opacity:0;" onload="this.style.opacity=1;" />
             {{else}}
               <img src="https://via.placeholder.com/60" width="60" height="60" class="avatar"
@@ -66,10 +66,10 @@
         {{#each checkedUser.Followers}}
           <a href="/users/{{this.id}}" class="text-decoration-none">
             {{#if this.image}}
-              <img src="{{this.image}}" width="60" height="60" class="avatar"
+              <img src="{{this.image}}" width="60" height="60" class="center-block img-responsive m-1"
                 style="transition: opacity 0.5s; opacity:0;" onload="this.style.opacity=1;" />
             {{else}}
-              <img src="https://via.placeholder.com/60" width="60" height="60" class="avatar"
+              <img src="https://via.placeholder.com/60" width="60" height="60" class="center-block img-responsive m-1"
                 style="transition: opacity 0.5s; opacity:0;" onload="this.style.opacity=1;" />
             {{/if}}
           </a>
@@ -85,7 +85,7 @@
       <div class="card-body">
         {{#each checkedUser.commentedRestaurants}}
           <a href="/restaurants/{{this.id}}" class="text-decoration-none">
-            <img src={{this.image}} width="60" height="60" class="avatar" style="transition: opacity 0.5s; opacity:0;"
+            <img src={{this.image}} width="60" height="60" class="center-block img-responsive m-1" style="transition: opacity 0.5s; opacity:0;"
               onload="this.style.opacity=1;" />
           </a>
         {{/each}}
@@ -99,7 +99,7 @@
       <div class="card-body">
         {{#each checkedUser.FavoritedRestaurants}}
           <a href="/restaurants/{{this.id}}" class="text-decoration-none">
-            <img src="{{this.image}}" width="60" height="60" class="avatar" style="transition: opacity 0.5s; opacity:0;"
+            <img src="{{this.image}}" width="60" height="60" class="center-block img-responsive m-1" style="transition: opacity 0.5s; opacity:0;"
               onload="this.style.opacity=1;" />
           </a>
         {{/each}}
