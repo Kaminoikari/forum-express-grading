@@ -1,7 +1,7 @@
 const path = require('path')
 const express = require('express')
 const handlebars = require('express-handlebars') // 引入 express-handlebars
-const routes = require('./routes')
+const { pages } = require('./routes')
 
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
@@ -39,7 +39,7 @@ app.use((req, res, next) => {
   next()
 })
 
-app.use(routes)
+app.use(pages)
 
 app.listen(port, () => {
   console.info(`Express is listening on port ${port}!`)

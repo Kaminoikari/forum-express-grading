@@ -1,6 +1,6 @@
-const { Restaurant, User, Category } = require('../models')
-const { getOffset, getPagination } = require('../helpers/pagination-helper')
-const { imgurFileHandler } = require('../helpers/file-helpers')
+const { Restaurant, User, Category } = require('../../models')
+const { getOffset, getPagination } = require('../../helpers/pagination-helper')
+const { imgurFileHandler } = require('../../helpers/file-helpers')
 
 const adminController = {
   getRestaurants: (req, res, next) => {
