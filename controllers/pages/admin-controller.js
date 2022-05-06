@@ -17,28 +17,11 @@ const adminController = {
       .catch(err => next(err))
   },
   postRestaurant: (req, res, next) => {
-    const { name, tel, address, openingHours, description, categoryId } =
-      req.body
-    if (!name) throw new Error('Restaurant name is required!')
-    const { file } = req
-    imgurFileHandler(file)
-      .then(filePath =>
-        Restaurant.create({
-          // 產生一個新的 Restaurant 物件實例，並存入資料庫
-          name,
-          tel,
-          address,
-          openingHours,
-          description,
-          image: filePath || null,
-          categoryId
-        })
-      )
-      .then(() => {
-        req.flash('success_messages', 'Restaurant was successfully created!') // 在畫面顯示成功提示
-        res.redirect('/admin/restaurants') // 新增完成後導回後台首頁
-      })
-      .catch(err => next(err))
+    adminServices.getRestaurants(req, (err, data) => {
+      if (err) return next(err)
+      req.flash('success_messages', 'Restaurant was successfully created!')
+      res.redirect('/admin/restaurants', data)
+    })
   },
   getRestaurant: (req, res, next) => {
     Restaurant.findByPk(req.params.id, {
