@@ -26,4 +26,4 @@ const userServices = {
   }
 }
 
-  module.exports = userServices
+module.exports = userServices

@@ -42,14 +42,14 @@ const userController = {
         const isFollowed = user.Followings.some(
           f => f.id === checkedUser.id
         )
-        checkedUser.commentedRestaurants = checkedUser.Comments.reduce(
-          (accumulator, comment) => {
-            if (!accumulator.some(r => r === comment.restaurantId)) {
-              accumulator.push(comment.Restaurant)
+        checkedUser.commentedRestaurants = checkedUser.Comments && checkedUser.Comments.reduce(
+          (accumulator, current) => {
+            // r.id會導致TypeError: Cannot read properties of null (reading 'id') 暫時先放著
+            if (!accumulator.some(r => r.id === current.restaurantId)) {
+              accumulator.push(current.Restaurant)
             }
             return accumulator
           }, [])
-
         res.render('users/profile', {
           user,
           checkedUser,
