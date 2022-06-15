@@ -2,9 +2,9 @@
   <div class='card mb-5 mt-4'>
     <div class='row gx-4'>
       <div class='col-md-4'>
-        {{#if checkedUser.image}}
+        {{#if user.image}}
         <img
-          src="{{checkedUser.image}}"
+          src="{{user.image}}"
           class="img-fluid rounded-start"
           style="width:100%; height:100%"
           onload="this.style.opacity=1;"
@@ -18,18 +18,18 @@
 
       <div class='col-md-8'>
         <div class='card-body'>
-          <h2 class='card-title'>{{checkedUser.name}}</h2>
-          <p class='card-text mt-4'>{{checkedUser.email}}</p>
+          <h2 class='card-title'>{{user.name}}</h2>
+          <p class='card-text mt-4'>{{user.email}}</p>
           <ul class="list-unstyled list-inline">
-            <li><strong>{{checkedUser.commentedRestaurants.length}}</strong> 已評論餐廳</li>
-            <li><strong>{{checkedUser.FavoritedRestaurants.length}}</strong> 收藏的餐廳</li>
-            <li><strong>{{checkedUser.Followings.length}}</strong> followings (追蹤者)</li>
-            <li><strong>{{checkedUser.Followers.length}}</strong> followers (追隨者)</li>
+            <li><strong>{{comments.length}}</strong> 已評論餐廳</li>
+            <li><strong>{{user.FavoritedRestaurants.length}}</strong> 收藏的餐廳</li>
+            <li><strong>{{user.Followings.length}}</strong> followings (追蹤者)</li>
+            <li><strong>{{user.Followers.length}}</strong> followers (追隨者)</li>
           </ul>
-          {{#if checkedUser.owner}}
+          {{#if user.owner}}
           <a
             class='btn btn-primary mt-4'
-            href='/users/{{checkedUser.id}}/edit'
+            href='/users/{{user.id}}/edit'
           >edit</a>
           {{/if}}
         </div>
@@ -41,10 +41,10 @@
   <div class="col-md-4">
     <div class="card">
       <div class="card-header">
-        followings (追蹤者):<strong>{{checkedUser.Followings.length}}</strong> 
+        followings (追蹤者):<strong>{{user.Followings.length}}</strong> 
       </div>
       <div class="card-body">
-        {{#each checkedUser.Followings}}
+        {{#each user.Followings}}
           <a href="/users/{{this.id}}" class="text-decoration-none">
             {{#if this.image}}
               <img src="{{this.image}}" width="60" height="60" class="center-block img-responsive m-1"
@@ -60,10 +60,10 @@
     <br />
     <div class="card">
       <div class="card-header">
-        followers (追隨者): <strong>{{checkedUser.Followers.length}}</strong> 
+        followers (追隨者): <strong>{{user.Followers.length}}</strong> 
       </div>
       <div class="card-body">
-        {{#each checkedUser.Followers}}
+        {{#each user.Followers}}
           <a href="/users/{{this.id}}" class="text-decoration-none">
             {{#if this.image}}
               <img src="{{this.image}}" width="60" height="60" class="center-block img-responsive m-1"
@@ -80,12 +80,12 @@
   <div class="col-md-8">
     <div class="card">
       <div class="card-header">
-        已評論餐廳: <strong>{{checkedUser.commentedRestaurants.length}}</strong>
+        已評論餐廳: <strong>{{comments.length}}</strong>
       </div>
       <div class="card-body">
-        {{#each checkedUser.commentedRestaurants}}
-          <a href="/restaurants/{{this.id}}" class="text-decoration-none">
-            <img src={{this.image}} width="60" height="60" class="center-block img-responsive m-1" style="transition: opacity 0.5s; opacity:0;"
+        {{#each comments}}
+          <a href="/restaurants/{{this.Restaurant.id}}" class="text-decoration-none">
+            <img src={{this.Restaurant.image}} width="60" height="60" class="center-block img-responsive m-1" style="transition: opacity 0.5s; opacity:0;"
               onload="this.style.opacity=1;" />
           </a>
         {{/each}}
@@ -94,10 +94,10 @@
     <br />
     <div class="card">
       <div class="card-header">
-        收藏的餐廳: <strong>{{checkedUser.FavoritedRestaurants.length}}</strong> 
+        收藏的餐廳: <strong>{{user.FavoritedRestaurants.length}}</strong> 
       </div>
       <div class="card-body">
-        {{#each checkedUser.FavoritedRestaurants}}
+        {{#each user.FavoritedRestaurants}}
           <a href="/restaurants/{{this.id}}" class="text-decoration-none">
             <img src="{{this.image}}" width="60" height="60" class="center-block img-responsive m-1" style="transition: opacity 0.5s; opacity:0;"
               onload="this.style.opacity=1;" />

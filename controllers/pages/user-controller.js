@@ -1,5 +1,5 @@
 // const bcrypt = require('bcryptjs')
-const { User, Restaurant, Comment, Favorite, Like, Followship } = require('../../models')
+const { User, Restaurant, Comment, Favorite, Like, Followship, sequelize } = require('../../models')
 const { imgurFileHandler } = require('../../helpers/file-helpers')
 const { getUser } = require('../../helpers/auth-helpers')
 
@@ -24,36 +24,31 @@ const userController = {
     res.redirect('/signin')
   },
   getUser: (req, res, next) => {
-    const user = req.user
-    const userParamsId = Number(req.params.id)
-    return User.findByPk(userParamsId, {
-      include: [
-        { model: Comment, include: Restaurant },
-        { model: Restaurant, as: 'FavoritedRestaurants' },
-        { model: User, as: 'Followers' },
-        { model: User, as: 'Followings' }
-      ]
-    })
-      .then(checkedUser => {
-        if (!checkedUser) throw new Error("User didn't exist!")
-        checkedUser = checkedUser.toJSON()
-        checkedUser.owner = Number(user.id) === userParamsId || false
-
-        const isFollowed = user.Followings.some(
-          f => f.id === checkedUser.id
-        )
-        checkedUser.commentedRestaurants = checkedUser.Comments && checkedUser.Comments.reduce(
-          (accumulator, current) => {
-            // r.id會導致TypeError: Cannot read properties of null (reading 'id') 暫時先放著
-            if (!accumulator.some(r => r.id === current.restaurantId)) {
-              accumulator.push(current.Restaurant)
-            }
-            return accumulator
-          }, [])
+    const userId = getUser(req).id
+    return Promise.all([
+      User.findByPk(req.params.id, {
+        include: [
+          Comment,
+          { model: Restaurant, as: 'FavoritedRestaurants' },
+          { model: User, as: 'Followings' },
+          { model: User, as: 'Followers' }
+        ]
+      }),
+      Comment.findAll({
+        where: { userId: req.params.id },
+        include: [Restaurant],
+        raw: true,
+        nest: true,
+        attributes: [[sequelize.fn('DISTINCT', sequelize.col('restaurant_id')), 'unduplicatedRestId']]
+      })
+    ])
+      .then(([user, comments]) => {
+        if (!user) throw new Error("User didn't exist!")
+        user = user.toJSON()
+        user.owner = Number(req.params.id) === userId || false
         res.render('users/profile', {
           user,
-          checkedUser,
-          isFollowed
+          comments
         })
       })
       .catch(err => next(err))
